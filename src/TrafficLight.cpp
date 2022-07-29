@@ -26,19 +26,19 @@ void MessageQueue<T>::send(T &&msg)
 
 /* Implementation of class "TrafficLight" */
 
-/*
+
 TrafficLight::TrafficLight()
 {
     _currentPhase = TrafficLightPhase::red;
 }
-
+/*
 void TrafficLight::waitForGreen()
 {
     // FP.5b : add the implementation of the method waitForGreen, in which an infinite while-loop
     // runs and repeatedly calls the receive function on the message queue.
     // Once it receives TrafficLightPhase::green, the method returns.
 }
-
+*/
 TrafficLightPhase TrafficLight::getCurrentPhase()
 {
     return _currentPhase;
@@ -46,9 +46,11 @@ TrafficLightPhase TrafficLight::getCurrentPhase()
 
 void TrafficLight::simulate()
 {
-    // FP.2b : Finally, the private method „cycleThroughPhases“ should be started in a thread when the public method „simulate“ is called. To do this, use the thread queue in the base class.
+    // DONE: FP.2b : Finally, the private method „cycleThroughPhases“ should be started in a thread when the public method „simulate“ is called. To do this, use the thread queue in the base class.
+    threads.emplace_back(std::thread(&TrafficLight::cycleThroughPhases, this));
+
 }
-*/
+
 // virtual function which is executed in a thread
 void TrafficLight::cycleThroughPhases()
 {
@@ -67,7 +69,7 @@ void TrafficLight::cycleThroughPhases()
         auto elapsed_duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(t1-t0).count();
         int current_duration_ms = d(gen);
         if (elapsed_duration_ms >= current_duration_ms) {
-            _currentPhase = (_currentPhase == TrafficLightPhase::red) ? TrafficLightPhase::green : TrafficLightPhase::red;
+            _currentPhase = (getCurrentPhase() == TrafficLightPhase::red) ? TrafficLightPhase::green : TrafficLightPhase::red;
             t0 = t1;
         }
     }
